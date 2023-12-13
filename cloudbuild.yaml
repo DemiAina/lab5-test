@@ -1,0 +1,22 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/${_PROJECT_ID}/${_IMAGE}', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/${_PROJECT_ID}/${_IMAGE}']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${_PROJECT_ID}/${_IMAGE}', '--region', '${_REGION}']
+
+images:
+  - 'gcr.io/${_PROJECT_ID}/${_IMAGE}'
+
+substitutions:
+  _PROJECT_ID: 'lab5-407311'
+  _IMAGE: 'first-test'
+  _SERVICE_NAME: 'ada-studnets'
+  _REGION: 'europe-west2'
